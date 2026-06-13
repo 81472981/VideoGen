@@ -66,6 +66,8 @@ public class TranscriptService {
                 "--write-auto-subs",
                 "--sub-langs", "zh-Hans,zh-Hant,zh,en",
                 "--sub-format", "vtt/srt/best",
+                "--socket-timeout", "20",
+                "--retries", "2",
                 "-o", "subtitle.%(ext)s",
                 videoUrl
         );
@@ -86,6 +88,8 @@ public class TranscriptService {
                 "-x",
                 "--audio-format", "mp3",
                 "--audio-quality", "0",
+                "--socket-timeout", "20",
+                "--retries", "2",
                 "-o", "audio.%(ext)s",
                 videoUrl
         );
