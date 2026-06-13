@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+videogen:
+  transcript:
+    yt-dlp-path: ${VIDEOGEN_YTDLP_PATH:yt-dlp}
+    whisper-command: ${VIDEOGEN_WHISPER_COMMAND:whisper {audio} --language Chinese --output_format vtt --output_dir {outputDir}}
+    work-dir: ${VIDEOGEN_WORK_DIR:${java.io.tmpdir}/videogen}
+    process-timeout: 15m
