@@ -5,6 +5,9 @@ const videoUrl = ref('')
 const isLoading = ref(false)
 const result = ref(null)
 const errorMessage = ref('')
+const progress = ref(0)
+const progressStage = ref('准备整理')
+let progressTimer = null
 
 const canSubmit = computed(() => videoUrl.value.trim().length > 0 && !isLoading.value)
 
@@ -14,6 +17,7 @@ async function submitTranscription() {
   isLoading.value = true
   result.value = null
   errorMessage.value = ''
+  startProgress()
 
   try {
     const response = await fetch('/api/transcriptions', {
@@ -31,10 +35,56 @@ async function submitTranscription() {
     }
 
     result.value = payload
+    completeProgress()
   } catch (error) {
     errorMessage.value = error.message
+    stopProgress()
   } finally {
     isLoading.value = false
+  }
+}
+
+function startProgress() {
+  clearProgressTimer()
+  progress.value = 8
+  progressStage.value = '正在读取视频'
+
+  progressTimer = window.setInterval(() => {
+    if (progress.value < 38) {
+      progress.value += 4
+      progressStage.value = '正在整理内容'
+      return
+    }
+
+    if (progress.value < 72) {
+      progress.value += 2
+      progressStage.value = '正在生成文本'
+      return
+    }
+
+    if (progress.value < 92) {
+      progress.value += 1
+      progressStage.value = '正在优化段落'
+    }
+  }, 1200)
+}
+
+function completeProgress() {
+  clearProgressTimer()
+  progress.value = 100
+  progressStage.value = '整理完成'
+}
+
+function stopProgress() {
+  clearProgressTimer()
+  progress.value = 0
+  progressStage.value = '准备整理'
+}
+
+function clearProgressTimer() {
+  if (progressTimer) {
+    window.clearInterval(progressTimer)
+    progressTimer = null
   }
 }
 
@@ -104,7 +154,14 @@ function parseJson(text) {
       </section>
 
       <section v-if="isLoading" class="notice loading">
-        正在解析视频，这一步取决于视频长度和平台响应速度。
+        <div class="progress-header">
+          <span>{{ progressStage }}</span>
+          <strong>{{ progress }}%</strong>
+        </div>
+        <div class="progress-track" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-fill" :style="{ width: `${progress}%` }"></div>
+        </div>
+        <p>视频越长，等待时间越久。页面保持打开即可。</p>
       </section>
 
       <section v-if="result" class="result-panel">
