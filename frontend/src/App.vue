@@ -52,16 +52,38 @@ function parseJson(text) {
 <template>
   <main class="page-shell">
     <section class="workspace">
-      <div class="intro">
-        <p class="eyebrow">探店视频生成 · 第一个模块</p>
-        <h1>把视频链接转成可编辑文案</h1>
-        <p class="summary">
-          优先提取视频自带字幕；没有字幕时自动走语音识别，并按时间段整理成段落。
-        </p>
-      </div>
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">V</span>
+          <span>VideoGen</span>
+        </div>
+        <span class="status-pill">探店内容创作助手</span>
+      </header>
+
+      <section class="hero">
+        <div class="intro">
+          <p class="eyebrow">为探店创作者提效</p>
+          <h1>把视频链接快速整理成可编辑文案</h1>
+          <p class="summary">
+            粘贴一条视频链接，获得层次清晰、方便二次创作的文本内容，让脚本整理和文案改写更顺手。
+          </p>
+
+          <div class="metric-row" aria-label="内容优势">
+            <span>一键整理</span>
+            <span>段落清晰</span>
+            <span>方便改写</span>
+          </div>
+        </div>
+
+      </section>
 
       <form class="input-panel" @submit.prevent="submitTranscription">
-        <label for="videoUrl">视频链接</label>
+        <div class="form-heading">
+          <div>
+            <label for="videoUrl">视频链接</label>
+            <p>粘贴你想整理的公开视频链接。</p>
+          </div>
+        </div>
         <div class="input-row">
           <input
             id="videoUrl"
@@ -74,7 +96,7 @@ function parseJson(text) {
             {{ isLoading ? '提取中...' : '提取文本' }}
           </button>
         </div>
-        <p class="hint">后端会先找字幕；找不到字幕时再下载音频进行语音转写。</p>
+        <p class="hint">视频越长，整理时间越久。处理完成后会按段落展示结果。</p>
       </form>
 
       <section v-if="errorMessage" class="notice error" role="alert">
@@ -88,7 +110,7 @@ function parseJson(text) {
       <section v-if="result" class="result-panel">
         <div class="result-header">
           <div>
-            <p class="eyebrow">来源：{{ result.sourceType === 'SUBTITLE' ? '视频字幕' : '语音识别' }}</p>
+            <p class="eyebrow">整理完成</p>
             <h2>提取结果</h2>
           </div>
           <span>{{ result.paragraphs.length }} 段</span>
